@@ -120,13 +120,20 @@ export default function ConfigMgmtPage() {
     e.stopPropagation();
     const newValue = !item.is_current;
     if (newValue) {
-      await supabase.from('config_items').update({ is_current: false }).neq('id', item.id);
+      // 같은 담당자의 기존 현재 작업중 항목만 해제
+      const query = supabase.from('config_items').update({ is_current: false }).neq('id', item.id);
+      if (item.assignee) {
+        await query.eq('assignee', item.assignee);
+      } else {
+        await query.is('assignee', null);
+      }
     }
     await supabase.from('config_items').update({ is_current: newValue }).eq('id', item.id);
-    setItems(prev => prev.map(i => ({
-      ...i,
-      is_current: i.id === item.id ? newValue : (newValue ? false : i.is_current),
-    })));
+    setItems(prev => prev.map(i => {
+      if (i.id === item.id) return { ...i, is_current: newValue };
+      if (newValue && i.assignee === item.assignee) return { ...i, is_current: false };
+      return i;
+    }));
   };
 
   const stats = {
@@ -316,27 +323,27 @@ export default function ConfigMgmtPage() {
         </div>
       </div>
 
-      {/* 현재 작업중 배너 */}
-      {(() => {
-        const cur = items.find(i => i.is_current);
-        if (!cur) return null;
-        return (
-          <div className={styles.currentBanner} onClick={() => navigate(`/config-mgmt/${cur.id}`)}>
-            <span className={styles.currentIcon}>▶</span>
-            <div className={styles.currentInfo}>
-              <span className={styles.currentLabel}>현재 작업중</span>
-              <span className={styles.currentTitle}>{cur.title}</span>
-            </div>
-            {cur.assignee && <span className={styles.currentAssignee}>{cur.assignee}</span>}
-            <div className={styles.currentProgress}>
-              <span className={styles.currentPct}>{cur.progress}%</span>
-              <div className={styles.currentBar}>
-                <div className={styles.currentFill} style={{ width: `${cur.progress}%` }} />
+      {/* 현재 작업중 배너 (담당자별) */}
+      {items.filter(i => i.is_current).length > 0 && (
+        <div className={styles.currentBanners}>
+          {items.filter(i => i.is_current).map(cur => (
+            <div key={cur.id} className={styles.currentBanner} onClick={() => navigate(`/config-mgmt/${cur.id}`)}>
+              <span className={styles.currentIcon}>▶</span>
+              <div className={styles.currentInfo}>
+                <span className={styles.currentLabel}>현재 작업중</span>
+                <span className={styles.currentTitle}>{cur.title}</span>
+              </div>
+              {cur.assignee && <span className={styles.currentAssignee}>{cur.assignee}</span>}
+              <div className={styles.currentProgress}>
+                <span className={styles.currentPct}>{cur.progress}%</span>
+                <div className={styles.currentBar}>
+                  <div className={styles.currentFill} style={{ width: `${cur.progress}%` }} />
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          ))}
+        </div>
+      )}
 
       {/* 필터 탭 + 보기 토글 */}
       <div className={styles.tabsRow}>

@@ -186,6 +186,13 @@
 }
 
 /* 현재 작업중 배너 */
+.currentBanners {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
 .currentBanner {
   display: flex;
   align-items: center;
@@ -194,7 +201,6 @@
   border: 1.5px solid #4ade80;
   border-radius: 12px;
   padding: 0.9rem 1.4rem;
-  margin-bottom: 1.2rem;
   cursor: pointer;
   transition: all 0.2s;
 }
