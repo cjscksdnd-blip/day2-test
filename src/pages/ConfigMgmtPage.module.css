@@ -1,5 +1,6 @@
 .page {}
 
+/* 페이지 헤더 */
 .pageHeader {
   display: flex;
   align-items: flex-start;
@@ -16,7 +17,7 @@
 }
 
 .subHeading {
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   color: #6b7280;
   margin: 0;
 }
@@ -36,9 +37,7 @@
   flex-shrink: 0;
 }
 
-.btnNew:hover {
-  background: #15803d;
-}
+.btnNew:hover { background: #15803d; }
 
 /* 통계 카드 */
 .statsGrid {
@@ -52,7 +51,7 @@
   background: #fff;
   border: 1.5px solid #d1fae5;
   border-radius: 12px;
-  padding: 1.2rem 1rem;
+  padding: 1.1rem 1rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.18s;
@@ -66,7 +65,7 @@
 
 .statNumber {
   display: block;
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 700;
   color: #111827;
   line-height: 1;
@@ -74,7 +73,7 @@
 
 .statLabel {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #6b7280;
   margin-top: 0.4rem;
 }
@@ -90,14 +89,14 @@
 .tabs {
   display: flex;
   gap: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   border-bottom: 2px solid #e5e7eb;
 }
 
 .tab {
   background: transparent;
   border: none;
-  padding: 0.6rem 1rem 0.75rem;
+  padding: 0.55rem 1rem 0.7rem;
   font-size: 0.875rem;
   color: #6b7280;
   cursor: pointer;
@@ -110,9 +109,7 @@
   white-space: nowrap;
 }
 
-.tab:hover {
-  color: #16a34a;
-}
+.tab:hover { color: #16a34a; }
 
 .tabActive {
   color: #16a34a;
@@ -124,8 +121,8 @@
   background: #f0fdf4;
   color: #16a34a;
   border-radius: 99px;
-  padding: 0.1rem 0.45rem;
-  font-size: 0.72rem;
+  padding: 0.1rem 0.42rem;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
@@ -134,208 +131,179 @@
   color: #fff;
 }
 
-/* 그리드 */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.2rem;
-}
-
-/* 카드 */
-.card {
-  background: #fff;
+/* ─── 리스트 ─── */
+.listWrap {
   border: 1.5px solid #d1fae5;
-  border-radius: 14px;
-  padding: 1.4rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* 컬럼 너비 (공통 정의) */
+.colBadges  { width: 120px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-start; }
+.colTitle   { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.colProgress{ width: 170px; flex-shrink: 0; }
+.colDate    { width: 170px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.colActions { width: 90px; flex-shrink: 0; display: flex; gap: 0.3rem; justify-content: flex-end; align-items: center; }
+
+/* 테이블 헤더 행 */
+.listHeader {
   display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  transition: transform 0.18s, box-shadow 0.18s;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.1);
-}
-
-.cardDelayed {
-  border-color: #fca5a5;
-  background: #fffafa;
-}
-
-.cardTop {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-/* 우선순위 배지 */
-.priorityBadge {
-  font-size: 0.72rem;
+  gap: 1rem;
+  padding: 0.65rem 1.2rem;
+  background: #f0fdf4;
+  border-bottom: 1.5px solid #d1fae5;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 99px;
-  letter-spacing: 0.01em;
-}
-
-.priority_high { background: #fee2e2; color: #dc2626; }
-.priority_medium { background: #fef3c7; color: #d97706; }
-.priority_low { background: #dbeafe; color: #2563eb; }
-
-/* 상태 배지 */
-.statusBadge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 99px;
-}
-
-.status_planning { background: #f3f4f6; color: #4b5563; }
-.status_in_progress { background: #dbeafe; color: #1d4ed8; }
-.status_completed { background: #dcfce7; color: #15803d; }
-.status_on_hold { background: #fef9c3; color: #92400e; }
-
-.cardTitle {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.cardDesc {
-  font-size: 0.85rem;
   color: #6b7280;
-  margin: 0;
-  line-height: 1.55;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* 리스트 행 */
+.listRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 1.2rem;
+  border-bottom: 1px solid #f0fdf4;
+  transition: background 0.15s;
+}
+
+.listRow:last-child { border-bottom: none; }
+
+.listRow:hover { background: #f9fffe; }
+
+.rowAlt { background: #fafafa; }
+.rowAlt:hover { background: #f0fdf4; }
+
+.rowDelayed {
+  border-left: 3px solid #ef4444;
+  background: #fffafa !important;
+}
+
+.rowDelayed:hover { background: #fff5f5 !important; }
+
+/* 배지 */
+.priorityBadge,
+.statusBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.priority_high   { background: #fee2e2; color: #dc2626; }
+.priority_medium { background: #fef3c7; color: #d97706; }
+.priority_low    { background: #dbeafe; color: #2563eb; }
+
+.status_planning    { background: #f3f4f6; color: #4b5563; }
+.status_in_progress { background: #dbeafe; color: #1d4ed8; }
+.status_completed   { background: #dcfce7; color: #15803d; }
+.status_on_hold     { background: #fef9c3; color: #92400e; }
+
+/* 제목/설명 */
+.rowTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowDesc {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 진행률 */
-.progressSection {
+.progressTop {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.progressHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.progressLabel {
-  font-size: 0.78rem;
-  color: #9ca3af;
-  font-weight: 500;
-}
-
-.progressPercent {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #16a34a;
-}
-
-.progressBar {
-  width: 100%;
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #16a34a, #4ade80);
-  transition: width 0.4s ease;
-  min-width: 4px;
-}
-
-/* 날짜 + D-day */
-.dateSection {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
 }
 
-.dateRange {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
+.progressBar {
+  flex: 1;
+  height: 7px;
+  background: #e5e7eb;
+  border-radius: 99px;
+  overflow: hidden;
+  display: block;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #16a34a, #4ade80);
+  transition: width 0.3s ease;
+  min-width: 3px;
+}
+
+.progressPct {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #16a34a;
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* 날짜 / D-day */
+.dateText {
   font-size: 0.78rem;
   color: #6b7280;
-  flex: 1;
-  min-width: 0;
+  white-space: nowrap;
 }
 
 .dday {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 5px;
   white-space: nowrap;
-  flex-shrink: 0;
+  align-self: flex-start;
 }
 
-.ddayNormal { background: #dcfce7; color: #15803d; }
-.ddayUrgent { background: #fef3c7; color: #d97706; }
+.ddayNormal  { background: #dcfce7; color: #15803d; }
+.ddayUrgent  { background: #fef3c7; color: #d97706; }
 .ddayOverdue { background: #fee2e2; color: #dc2626; }
 
-/* 카드 하단 */
-.cardBottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 0.6rem;
-  border-top: 1px solid #f3f4f6;
-  margin-top: auto;
-}
-
-.author {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.actions {
-  display: flex;
-  gap: 0.35rem;
-  flex-shrink: 0;
-}
-
+/* 액션 버튼 */
 .btnEdit {
   background: transparent;
   border: 1px solid #d1d5db;
   color: #4b5563;
   border-radius: 6px;
-  padding: 0.22rem 0.6rem;
+  padding: 0.25rem 0.55rem;
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.btnEdit:hover {
-  border-color: #16a34a;
-  color: #16a34a;
-}
+.btnEdit:hover { border-color: #16a34a; color: #16a34a; }
 
 .btnDelete {
   background: transparent;
   border: 1px solid #fca5a5;
   color: #ef4444;
   border-radius: 6px;
-  padding: 0.22rem 0.6rem;
+  padding: 0.25rem 0.55rem;
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.btnDelete:hover {
-  background: #fee2e2;
-}
+.btnDelete:hover { background: #fee2e2; }
+
+.noAction { color: #d1d5db; font-size: 0.85rem; }
 
 /* 빈 상태 */
 .empty {
@@ -357,14 +325,27 @@
   transition: background 0.2s;
 }
 
-.btnNewInline:hover {
-  background: #15803d;
-}
+.btnNewInline:hover { background: #15803d; }
 
 /* 반응형 */
+@media (max-width: 900px) {
+  .colDate { width: 140px; }
+  .colProgress { width: 140px; }
+}
+
 @media (max-width: 768px) {
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
-  .grid { grid-template-columns: 1fr; }
+  .listHeader { display: none; }
+  .listRow {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+  }
+  .colBadges  { width: auto; flex-direction: row; }
+  .colTitle   { width: 100%; order: -1; }
+  .colProgress { width: 100%; }
+  .colDate    { width: 100%; flex-direction: row; align-items: center; }
+  .colActions { width: 100%; justify-content: flex-end; }
   .pageHeader { flex-direction: column; }
   .tabs { overflow-x: auto; }
 }

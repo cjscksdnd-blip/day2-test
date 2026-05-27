@@ -34,6 +34,11 @@ function isDelayed(item: ConfigItem): boolean {
   return days !== null && days < 0;
 }
 
+function formatDate(d: string | null) {
+  if (!d) return '미설정';
+  return new Date(d).toLocaleDateString('ko-KR', { year: '2-digit', month: 'short', day: 'numeric' });
+}
+
 export default function ConfigMgmtPage() {
   const [items, setItems] = useState<ConfigItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,9 +46,7 @@ export default function ConfigMgmtPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
+  useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -76,6 +79,7 @@ export default function ConfigMgmtPage() {
 
   return (
     <div className={styles.page}>
+      {/* 헤더 */}
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.heading}>형상관리</h1>
@@ -122,14 +126,12 @@ export default function ConfigMgmtPage() {
             onClick={() => setFilter(val)}
           >
             {label}
-            {count !== null && (
-              <span className={styles.tabCount}>{count}</span>
-            )}
+            {count !== null && <span className={styles.tabCount}>{count}</span>}
           </button>
         ))}
       </div>
 
-      {/* 항목 목록 */}
+      {/* 리스트 */}
       {loading ? (
         <div className={styles.empty}><p>불러오는 중...</p></div>
       ) : filtered.length === 0 ? (
@@ -138,15 +140,28 @@ export default function ConfigMgmtPage() {
           {user && <Link to="/config-mgmt/new" className={styles.btnNewInline}>+ 첫 항목 등록하기</Link>}
         </div>
       ) : (
-        <div className={styles.grid}>
-          {filtered.map(item => {
+        <div className={styles.listWrap}>
+          {/* 테이블 헤더 */}
+          <div className={styles.listHeader}>
+            <span className={styles.colBadges}>우선순위 / 상태</span>
+            <span className={styles.colTitle}>제목 및 설명</span>
+            <span className={styles.colProgress}>진행률</span>
+            <span className={styles.colDate}>기간 / D-day</span>
+            <span className={styles.colActions}>관리</span>
+          </div>
+
+          {/* 리스트 아이템 */}
+          {filtered.map((item, idx) => {
             const remaining = getRemainingDays(item.end_date);
             const delayed = isDelayed(item);
 
             return (
-              <div key={item.id} className={`${styles.card} ${delayed ? styles.cardDelayed : ''}`}>
-                {/* 상단: 우선순위 + 상태 */}
-                <div className={styles.cardTop}>
+              <div
+                key={item.id}
+                className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}
+              >
+                {/* 우선순위 + 상태 */}
+                <div className={styles.colBadges}>
                   <span className={`${styles.priorityBadge} ${styles[`priority_${item.priority}` as keyof typeof styles]}`}>
                     {PRIORITY_LABEL[item.priority]}
                   </span>
@@ -155,79 +170,56 @@ export default function ConfigMgmtPage() {
                   </span>
                 </div>
 
-                {/* 제목 */}
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-
-                {/* 설명 */}
-                {item.description && (
-                  <p className={styles.cardDesc}>
-                    {item.description.length > 90
-                      ? item.description.slice(0, 90) + '...'
-                      : item.description}
-                  </p>
-                )}
+                {/* 제목 + 설명 */}
+                <div className={styles.colTitle}>
+                  <span className={styles.rowTitle}>{item.title}</span>
+                  {item.description && (
+                    <span className={styles.rowDesc}>
+                      {item.description.length > 60
+                        ? item.description.slice(0, 60) + '...'
+                        : item.description}
+                    </span>
+                  )}
+                </div>
 
                 {/* 진행률 */}
-                <div className={styles.progressSection}>
-                  <div className={styles.progressHeader}>
-                    <span className={styles.progressLabel}>진행률</span>
-                    <span className={styles.progressPercent}>{item.progress}%</span>
-                  </div>
-                  <div className={styles.progressBar}>
-                    <div
-                      className={styles.progressFill}
-                      style={{ width: `${item.progress}%` }}
-                    />
+                <div className={styles.colProgress}>
+                  <div className={styles.progressTop}>
+                    <span className={styles.progressBar}>
+                      <span
+                        className={styles.progressFill}
+                        style={{ width: `${item.progress}%` }}
+                      />
+                    </span>
+                    <span className={styles.progressPct}>{item.progress}%</span>
                   </div>
                 </div>
 
                 {/* 기간 + D-day */}
-                <div className={styles.dateSection}>
-                  <div className={styles.dateRange}>
-                    <span>📅</span>
-                    <span>
-                      {item.start_date
-                        ? new Date(item.start_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
-                        : '미설정'}
-                      {' → '}
-                      {item.end_date
-                        ? new Date(item.end_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
-                        : '미설정'}
-                    </span>
-                  </div>
+                <div className={styles.colDate}>
+                  <span className={styles.dateText}>
+                    {formatDate(item.start_date)} ~ {formatDate(item.end_date)}
+                  </span>
                   {remaining !== null && (
                     <span className={`${styles.dday} ${
                       delayed ? styles.ddayOverdue :
                       remaining <= 7 ? styles.ddayUrgent :
                       styles.ddayNormal
                     }`}>
-                      {delayed
-                        ? `D+${Math.abs(remaining)} 지연`
-                        : remaining === 0
-                        ? 'D-Day'
-                        : `D-${remaining}`}
+                      {delayed ? `D+${Math.abs(remaining)} 지연` : remaining === 0 ? 'D-Day' : `D-${remaining}`}
                     </span>
                   )}
                 </div>
 
-                {/* 작성자 + 액션 */}
-                <div className={styles.cardBottom}>
-                  <span className={styles.author}>{item.author_id.slice(0, 8)}...</span>
-                  {user?.id === item.author_id && (
-                    <div className={styles.actions}>
-                      <button
-                        onClick={() => navigate(`/config-mgmt/${item.id}/edit`)}
-                        className={styles.btnEdit}
-                      >
-                        수정
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className={styles.btnDelete}
-                      >
-                        삭제
-                      </button>
-                    </div>
+                {/* 수정/삭제 */}
+                <div className={styles.colActions}>
+                  {user?.id === item.author_id ? (
+                    <>
+                      <button onClick={() => navigate(`/config-mgmt/${item.id}/edit`)} className={styles.btnEdit}>수정</button>
+                      <button onClick={() => handleDelete(item.id)} className={styles.btnDelete}>삭제</button>
+                    </>
+                  ) : (
+                    <span className={styles.noAction}>—</span>
                   )}
                 </div>
               </div>
