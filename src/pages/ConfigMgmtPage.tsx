@@ -291,11 +291,11 @@ export default function ConfigMgmtPage() {
       <div className={styles.tabsRow}>
         <div className={styles.tabs}>
           {([
-            ['all', '전체', stats.total],
             ['in_progress', '진행중', stats.inProgress],
             ['planning', '계획중', stats.planning],
             ['completed', '완료', stats.completed],
             ['on_hold', '보류', items.filter(i => i.status === 'on_hold').length],
+            ['all', '전체', stats.total],
           ] as [FilterType, string, number | null][]).map(([val, label, count]) => (
             <button key={val} className={`${styles.tab} ${filter === val ? styles.tabActive : ''}`} onClick={() => setFilter(val)}>
               {label}
