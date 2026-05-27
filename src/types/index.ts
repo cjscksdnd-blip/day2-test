@@ -15,3 +15,17 @@ export interface Comment {
   created_at: string;
   profiles?: { email: string };
 }
+
+export interface ConfigItem {
+  id: string;
+  title: string;
+  description: string | null;
+  status: 'planning' | 'in_progress' | 'completed' | 'on_hold';
+  priority: 'high' | 'medium' | 'low';
+  progress: number;
+  start_date: string | null;
+  end_date: string | null;
+  author_id: string;
+  created_at: string;
+  profiles?: { email: string };
+}

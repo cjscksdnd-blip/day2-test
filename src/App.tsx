@@ -8,6 +8,9 @@ import PostListPage from './pages/PostListPage';
 import PostDetailPage from './pages/PostDetailPage';
 import PostCreatePage from './pages/PostCreatePage';
 import PostEditPage from './pages/PostEditPage';
+import ConfigMgmtPage from './pages/ConfigMgmtPage';
+import ConfigMgmtCreatePage from './pages/ConfigMgmtCreatePage';
+import ConfigMgmtEditPage from './pages/ConfigMgmtEditPage';
 
 export default function App() {
   return (
@@ -32,6 +35,23 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <PostEditPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/config-mgmt" element={<ConfigMgmtPage />} />
+            <Route
+              path="/config-mgmt/new"
+              element={
+                <ProtectedRoute>
+                  <ConfigMgmtCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/config-mgmt/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <ConfigMgmtEditPage />
                 </ProtectedRoute>
               }
             />
