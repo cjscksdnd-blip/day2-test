@@ -20,6 +20,7 @@ export interface ConfigItem {
   id: string;
   title: string;
   description: string | null;
+  images: string[] | null;
   status: 'planning' | 'in_progress' | 'completed' | 'on_hold';
   priority: 'high' | 'medium' | 'low';
   progress: number;

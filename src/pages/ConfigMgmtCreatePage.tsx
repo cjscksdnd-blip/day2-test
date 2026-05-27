@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +9,9 @@ export default function ConfigMgmtCreatePage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [images, setImages] = useState<string[]>([]);
+  const [imageUploading, setImageUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -30,6 +33,41 @@ export default function ConfigMgmtCreatePage() {
     }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length || !user) return;
+
+    setImageUploading(true);
+    const uploadedUrls: string[] = [];
+
+    for (const file of files) {
+      const ext = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const path = `config-items/${user.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('config-images')
+        .upload(path, file);
+
+      if (!uploadError) {
+        const { data } = supabase.storage.from('config-images').getPublicUrl(path);
+        uploadedUrls.push(data.publicUrl);
+      }
+    }
+
+    setImages(prev => [...prev, ...uploadedUrls]);
+    setImageUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeImage = async (url: string) => {
+    const path = url.split('/config-images/')[1];
+    if (path) {
+      await supabase.storage.from('config-images').remove([path]);
+    }
+    setImages(prev => prev.filter(u => u !== url));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) { setError('제목을 입력해주세요.'); return; }
@@ -41,6 +79,7 @@ export default function ConfigMgmtCreatePage() {
     const { error: supaErr } = await supabase.from('config_items').insert({
       title: form.title.trim(),
       description: form.description.trim() || null,
+      images: images.length > 0 ? images : null,
       assignee: form.assignee.trim() || null,
       status: form.status,
       priority: form.priority,
@@ -88,6 +127,37 @@ export default function ConfigMgmtCreatePage() {
               className={styles.textarea}
               rows={3}
             />
+            <div className={styles.imageUploadSection}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                id="imageUpload"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                className={styles.fileInput}
+              />
+              <label htmlFor="imageUpload" className={styles.imageUploadBtn}>
+                {imageUploading ? '업로드 중...' : '📎 사진 추가'}
+              </label>
+              {images.length > 0 && (
+                <div className={styles.imagePreviews}>
+                  {images.map((url, i) => (
+                    <div key={url} className={styles.imagePreview}>
+                      <img src={url} alt={`첨부 이미지 ${i + 1}`} />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(url)}
+                        className={styles.removeImage}
+                        aria-label="이미지 삭제"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className={styles.field}>
@@ -147,7 +217,7 @@ export default function ConfigMgmtCreatePage() {
 
           <div className={styles.buttonRow}>
             <button type="button" onClick={() => navigate('/config-mgmt')} className={styles.btnCancel}>취소</button>
-            <button type="submit" disabled={loading} className={styles.btnSubmit}>
+            <button type="submit" disabled={loading || imageUploading} className={styles.btnSubmit}>
               {loading ? '등록 중...' : '등록하기'}
             </button>
           </div>
