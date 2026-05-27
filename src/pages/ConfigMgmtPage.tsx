@@ -96,7 +96,7 @@ const VIEW_MODES: { mode: ViewMode; icon: string; label: string }[] = [
 export default function ConfigMgmtPage() {
   const [items, setItems] = useState<ConfigItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<FilterType>('in_progress');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const { user } = useAuth();
   const navigate = useNavigate();
