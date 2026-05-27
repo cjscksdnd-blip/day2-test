@@ -1,8 +1,8 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Post, Comment } from '../types';
+import type { Post, Comment } from '../types';
 import styles from './PostDetailPage.module.css';
 
 export default function PostDetailPage() {

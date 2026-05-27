@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Post } from '../types';
+import type { Post } from '../types';
 import PostCard from '../components/PostCard';
 import styles from './PostListPage.module.css';
 
