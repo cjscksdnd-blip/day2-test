@@ -2,7 +2,11 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f0fdf4;
+  background-color: #f0fdf4;
+  background-image: url('/green.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .header {
@@ -87,6 +91,9 @@
   width: 100%;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+  background: rgba(240, 253, 244, 0.72);
+  backdrop-filter: blur(2px);
+  border-radius: 0 0 12px 12px;
 }
 
 .footer {
