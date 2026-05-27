@@ -42,7 +42,7 @@
 /* 통계 카드 */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -78,12 +78,14 @@
   margin-top: 0.4rem;
 }
 
-.statBlue .statNumber { color: #2563eb; }
-.statBlue { border-color: #bfdbfe; }
-.statGreen .statNumber { color: #16a34a; }
-.statGreen { border-color: #bbf7d0; }
-.statRed .statNumber { color: #dc2626; }
-.statRed { border-color: #fecaca; }
+.statBlue .statNumber   { color: #2563eb; }
+.statBlue               { border-color: #bfdbfe; }
+.statYellow .statNumber { color: #d97706; }
+.statYellow             { border-color: #fde68a; }
+.statGreen .statNumber  { color: #16a34a; }
+.statGreen              { border-color: #bbf7d0; }
+.statGray .statNumber   { color: #6b7280; }
+.statGray               { border-color: #e5e7eb; }
 
 /* 필터 탭 + 보기 토글 행 */
 .tabsRow {
@@ -243,14 +245,15 @@
   padding: 0.95rem 1.2rem;
   border-bottom: 1px solid #f0fdf4;
   transition: background 0.15s;
+  cursor: pointer;
 }
 
 .listRow:last-child { border-bottom: none; }
 
-.listRow:hover { background: #f9fffe; }
+.listRow:hover { background: #dcfce7; }
 
 .rowAlt { background: #fafafa; }
-.rowAlt:hover { background: #f0fdf4; }
+.rowAlt:hover { background: #dcfce7; }
 
 .rowDelayed {
   border-left: 3px solid #ef4444;
@@ -484,7 +487,7 @@
 }
 
 @media (max-width: 768px) {
-  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .statsGrid { grid-template-columns: repeat(3, 1fr); }
   .listHeader { display: none; }
   .listRow {
     flex-wrap: wrap;

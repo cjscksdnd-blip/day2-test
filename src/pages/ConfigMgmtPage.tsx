@@ -134,7 +134,11 @@ export default function ConfigMgmtPage() {
     const remaining = getRemainingDays(item.end_date);
     const delayed = isDelayed(item);
     return (
-      <div key={item.id} className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}>
+      <div
+        key={item.id}
+        className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}
+        onClick={() => navigate(`/config-mgmt/${item.id}/edit`)}
+      >
         <div className={styles.colBadges}>
           <span className={`${styles.priorityBadge} ${styles[`priority_${item.priority}` as keyof typeof styles]}`}>{PRIORITY_LABEL[item.priority]}</span>
           <span className={`${styles.statusBadge} ${styles[`status_${item.status}` as keyof typeof styles]}`}>{STATUS_LABEL[item.status]}</span>
@@ -164,7 +168,7 @@ export default function ConfigMgmtPage() {
             </span>
           )}
         </div>
-        <div className={styles.colActions}>
+        <div className={styles.colActions} onClick={e => e.stopPropagation()}>
           {user?.id === item.author_id ? (
             <>
               <button onClick={() => navigate(`/config-mgmt/${item.id}/edit`)} className={styles.btnEdit}>수정</button>
@@ -269,13 +273,17 @@ export default function ConfigMgmtPage() {
           <span className={styles.statNumber}>{stats.inProgress}</span>
           <span className={styles.statLabel}>진행중</span>
         </div>
+        <div className={`${styles.statCard} ${styles.statYellow}`} onClick={() => setFilter('planning')}>
+          <span className={styles.statNumber}>{stats.planning}</span>
+          <span className={styles.statLabel}>계획중</span>
+        </div>
         <div className={`${styles.statCard} ${styles.statGreen}`} onClick={() => setFilter('completed')}>
           <span className={styles.statNumber}>{stats.completed}</span>
           <span className={styles.statLabel}>완료</span>
         </div>
-        <div className={`${styles.statCard} ${styles.statRed}`} onClick={() => setFilter('delayed')}>
-          <span className={styles.statNumber}>{stats.delayed}</span>
-          <span className={styles.statLabel}>지연</span>
+        <div className={`${styles.statCard} ${styles.statGray}`} onClick={() => setFilter('on_hold')}>
+          <span className={styles.statNumber}>{items.filter(i => i.status === 'on_hold').length}</span>
+          <span className={styles.statLabel}>보류</span>
         </div>
       </div>
 
@@ -287,8 +295,7 @@ export default function ConfigMgmtPage() {
             ['in_progress', '진행중', stats.inProgress],
             ['planning', '계획중', stats.planning],
             ['completed', '완료', stats.completed],
-            ['on_hold', '보류', null],
-            ['delayed', '지연', stats.delayed],
+            ['on_hold', '보류', items.filter(i => i.status === 'on_hold').length],
           ] as [FilterType, string, number | null][]).map(([val, label, count]) => (
             <button key={val} className={`${styles.tab} ${filter === val ? styles.tabActive : ''}`} onClick={() => setFilter(val)}>
               {label}
