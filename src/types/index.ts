@@ -25,6 +25,7 @@ export interface ConfigItem {
   progress: number;
   start_date: string | null;
   end_date: string | null;
+  assignee: string | null;
   author_id: string;
   created_at: string;
 }

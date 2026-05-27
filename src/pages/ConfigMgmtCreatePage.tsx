@@ -12,6 +12,7 @@ export default function ConfigMgmtCreatePage() {
   const [form, setForm] = useState({
     title: '',
     description: '',
+    assignee: '',
     status: 'planning' as 'planning' | 'in_progress' | 'completed' | 'on_hold',
     priority: 'medium' as 'high' | 'medium' | 'low',
     progress: 0,
@@ -40,6 +41,7 @@ export default function ConfigMgmtCreatePage() {
     const { error: supaErr } = await supabase.from('config_items').insert({
       title: form.title.trim(),
       description: form.description.trim() || null,
+      assignee: form.assignee.trim() || null,
       status: form.status,
       priority: form.priority,
       progress: form.progress,
@@ -53,7 +55,6 @@ export default function ConfigMgmtCreatePage() {
       setLoading(false);
       return;
     }
-
     navigate('/config-mgmt');
   };
 
@@ -67,9 +68,7 @@ export default function ConfigMgmtCreatePage() {
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
-            <label className={styles.label}>
-              제목 <span className={styles.required}>*</span>
-            </label>
+            <label className={styles.label}>제목 <span className={styles.required}>*</span></label>
             <input
               name="title"
               value={form.title}
@@ -87,7 +86,18 @@ export default function ConfigMgmtCreatePage() {
               onChange={handleChange}
               placeholder="항목에 대한 상세 설명을 입력하세요"
               className={styles.textarea}
-              rows={4}
+              rows={3}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>담당자</label>
+            <input
+              name="assignee"
+              value={form.assignee}
+              onChange={handleChange}
+              placeholder="담당자 이름을 입력하세요"
+              className={styles.input}
             />
           </div>
 
@@ -112,19 +122,8 @@ export default function ConfigMgmtCreatePage() {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>
-              진행률&nbsp;<strong className={styles.progressValue}>{form.progress}%</strong>
-            </label>
-            <input
-              type="range"
-              name="progress"
-              min={0}
-              max={100}
-              step={5}
-              value={form.progress}
-              onChange={handleChange}
-              className={styles.range}
-            />
+            <label className={styles.label}>진행률&nbsp;<strong className={styles.progressValue}>{form.progress}%</strong></label>
+            <input type="range" name="progress" min={0} max={100} step={5} value={form.progress} onChange={handleChange} className={styles.range} />
             <div className={styles.rangeLabels}>
               <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
             </div>
@@ -136,36 +135,18 @@ export default function ConfigMgmtCreatePage() {
           <div className={styles.row}>
             <div className={styles.field}>
               <label className={styles.label}>시작일</label>
-              <input
-                type="date"
-                name="start_date"
-                value={form.start_date}
-                onChange={handleChange}
-                className={styles.input}
-              />
+              <input type="date" name="start_date" value={form.start_date} onChange={handleChange} className={styles.input} />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>종료일 (마감일)</label>
-              <input
-                type="date"
-                name="end_date"
-                value={form.end_date}
-                onChange={handleChange}
-                className={styles.input}
-              />
+              <input type="date" name="end_date" value={form.end_date} onChange={handleChange} className={styles.input} />
             </div>
           </div>
 
           {error && <p className={styles.error}>{error}</p>}
 
           <div className={styles.buttonRow}>
-            <button
-              type="button"
-              onClick={() => navigate('/config-mgmt')}
-              className={styles.btnCancel}
-            >
-              취소
-            </button>
+            <button type="button" onClick={() => navigate('/config-mgmt')} className={styles.btnCancel}>취소</button>
             <button type="submit" disabled={loading} className={styles.btnSubmit}>
               {loading ? '등록 중...' : '등록하기'}
             </button>

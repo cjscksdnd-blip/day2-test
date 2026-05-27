@@ -6,6 +6,7 @@ import type { ConfigItem } from '../types';
 import styles from './ConfigMgmtPage.module.css';
 
 type FilterType = 'all' | 'in_progress' | 'planning' | 'completed' | 'on_hold' | 'delayed';
+type ViewMode = 'list' | 'grouped';
 
 const STATUS_LABEL: Record<ConfigItem['status'], string> = {
   planning: '계획중',
@@ -39,10 +40,25 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleDateString('ko-KR', { year: '2-digit', month: 'short', day: 'numeric' });
 }
 
+function groupByAssignee(items: ConfigItem[]): [string, ConfigItem[]][] {
+  const map: Record<string, ConfigItem[]> = {};
+  for (const item of items) {
+    const key = item.assignee?.trim() || '미지정';
+    if (!map[key]) map[key] = [];
+    map[key].push(item);
+  }
+  return Object.entries(map).sort(([a], [b]) => {
+    if (a === '미지정') return 1;
+    if (b === '미지정') return -1;
+    return a.localeCompare(b, 'ko');
+  });
+}
+
 export default function ConfigMgmtPage() {
   const [items, setItems] = useState<ConfigItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -77,6 +93,85 @@ export default function ConfigMgmtPage() {
     filter === 'delayed' ? items.filter(isDelayed) :
     items.filter(i => i.status === filter);
 
+  const renderRow = (item: ConfigItem, idx: number, hideAssignee = false) => {
+    const remaining = getRemainingDays(item.end_date);
+    const delayed = isDelayed(item);
+
+    return (
+      <div
+        key={item.id}
+        className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}
+      >
+        {/* 우선순위 + 상태 */}
+        <div className={styles.colBadges}>
+          <span className={`${styles.priorityBadge} ${styles[`priority_${item.priority}` as keyof typeof styles]}`}>
+            {PRIORITY_LABEL[item.priority]}
+          </span>
+          <span className={`${styles.statusBadge} ${styles[`status_${item.status}` as keyof typeof styles]}`}>
+            {STATUS_LABEL[item.status]}
+          </span>
+        </div>
+
+        {/* 제목 + 설명 */}
+        <div className={styles.colTitle}>
+          <span className={styles.rowTitle}>{item.title}</span>
+          {item.description && (
+            <span className={styles.rowDesc}>
+              {item.description.length > 55 ? item.description.slice(0, 55) + '...' : item.description}
+            </span>
+          )}
+        </div>
+
+        {/* 담당자 (그룹 보기일 때는 숨김) */}
+        {!hideAssignee && (
+          <div className={styles.colAssignee}>
+            {item.assignee ? (
+              <span className={styles.assigneeChip}>{item.assignee}</span>
+            ) : (
+              <span className={styles.assigneeNone}>미지정</span>
+            )}
+          </div>
+        )}
+
+        {/* 진행률 */}
+        <div className={styles.colProgress}>
+          <div className={styles.progressTop}>
+            <span className={styles.progressBar}>
+              <span className={styles.progressFill} style={{ width: `${item.progress}%` }} />
+            </span>
+            <span className={styles.progressPct}>{item.progress}%</span>
+          </div>
+        </div>
+
+        {/* 기간 + D-day */}
+        <div className={styles.colDate}>
+          <span className={styles.dateText}>{formatDate(item.start_date)} ~ {formatDate(item.end_date)}</span>
+          {remaining !== null && (
+            <span className={`${styles.dday} ${
+              delayed ? styles.ddayOverdue :
+              remaining <= 7 ? styles.ddayUrgent :
+              styles.ddayNormal
+            }`}>
+              {delayed ? `D+${Math.abs(remaining)} 지연` : remaining === 0 ? 'D-Day' : `D-${remaining}`}
+            </span>
+          )}
+        </div>
+
+        {/* 수정/삭제 */}
+        <div className={styles.colActions}>
+          {user?.id === item.author_id ? (
+            <>
+              <button onClick={() => navigate(`/config-mgmt/${item.id}/edit`)} className={styles.btnEdit}>수정</button>
+              <button onClick={() => handleDelete(item.id)} className={styles.btnDelete}>삭제</button>
+            </>
+          ) : (
+            <span className={styles.noAction}>—</span>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.page}>
       {/* 헤더 */}
@@ -85,9 +180,7 @@ export default function ConfigMgmtPage() {
           <h1 className={styles.heading}>형상관리</h1>
           <p className={styles.subHeading}>프로젝트 형상 항목의 진행 현황을 관리합니다</p>
         </div>
-        {user && (
-          <Link to="/config-mgmt/new" className={styles.btnNew}>+ 새 항목 등록</Link>
-        )}
+        {user && <Link to="/config-mgmt/new" className={styles.btnNew}>+ 새 항목 등록</Link>}
       </div>
 
       {/* 통계 카드 */}
@@ -110,25 +203,45 @@ export default function ConfigMgmtPage() {
         </div>
       </div>
 
-      {/* 필터 탭 */}
-      <div className={styles.tabs}>
-        {([
-          ['all', '전체', stats.total],
-          ['in_progress', '진행중', stats.inProgress],
-          ['planning', '계획중', stats.planning],
-          ['completed', '완료', stats.completed],
-          ['on_hold', '보류', null],
-          ['delayed', '지연', stats.delayed],
-        ] as [FilterType, string, number | null][]).map(([val, label, count]) => (
+      {/* 필터 탭 + 보기 토글 */}
+      <div className={styles.tabsRow}>
+        <div className={styles.tabs}>
+          {([
+            ['all', '전체', stats.total],
+            ['in_progress', '진행중', stats.inProgress],
+            ['planning', '계획중', stats.planning],
+            ['completed', '완료', stats.completed],
+            ['on_hold', '보류', null],
+            ['delayed', '지연', stats.delayed],
+          ] as [FilterType, string, number | null][]).map(([val, label, count]) => (
+            <button
+              key={val}
+              className={`${styles.tab} ${filter === val ? styles.tabActive : ''}`}
+              onClick={() => setFilter(val)}
+            >
+              {label}
+              {count !== null && <span className={styles.tabCount}>{count}</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* 보기 모드 토글 */}
+        <div className={styles.viewToggle}>
           <button
-            key={val}
-            className={`${styles.tab} ${filter === val ? styles.tabActive : ''}`}
-            onClick={() => setFilter(val)}
+            className={`${styles.viewBtn} ${viewMode === 'list' ? styles.viewBtnActive : ''}`}
+            onClick={() => setViewMode('list')}
+            title="전체 목록"
           >
-            {label}
-            {count !== null && <span className={styles.tabCount}>{count}</span>}
+            ☰ 목록
           </button>
-        ))}
+          <button
+            className={`${styles.viewBtn} ${viewMode === 'grouped' ? styles.viewBtnActive : ''}`}
+            onClick={() => setViewMode('grouped')}
+            title="담당자별 보기"
+          >
+            👤 담당자별
+          </button>
+        </div>
       </div>
 
       {/* 리스트 */}
@@ -139,92 +252,53 @@ export default function ConfigMgmtPage() {
           <p>등록된 형상관리 항목이 없습니다.</p>
           {user && <Link to="/config-mgmt/new" className={styles.btnNewInline}>+ 첫 항목 등록하기</Link>}
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
+        /* ── 전체 목록 뷰 ── */
         <div className={styles.listWrap}>
-          {/* 테이블 헤더 */}
           <div className={styles.listHeader}>
             <span className={styles.colBadges}>우선순위 / 상태</span>
             <span className={styles.colTitle}>제목 및 설명</span>
+            <span className={styles.colAssignee}>담당자</span>
             <span className={styles.colProgress}>진행률</span>
             <span className={styles.colDate}>기간 / D-day</span>
             <span className={styles.colActions}>관리</span>
           </div>
-
-          {/* 리스트 아이템 */}
-          {filtered.map((item, idx) => {
-            const remaining = getRemainingDays(item.end_date);
-            const delayed = isDelayed(item);
-
-            return (
-              <div
-                key={item.id}
-                className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}
-              >
-                {/* 우선순위 + 상태 */}
-                <div className={styles.colBadges}>
-                  <span className={`${styles.priorityBadge} ${styles[`priority_${item.priority}` as keyof typeof styles]}`}>
-                    {PRIORITY_LABEL[item.priority]}
+          {filtered.map((item, idx) => renderRow(item, idx, false))}
+        </div>
+      ) : (
+        /* ── 담당자별 그룹 뷰 ── */
+        <div className={styles.groupedWrap}>
+          {groupByAssignee(filtered).map(([assignee, groupItems]) => (
+            <div key={assignee} className={styles.group}>
+              {/* 그룹 헤더 */}
+              <div className={styles.groupHeader}>
+                <span className={styles.groupIcon}>👤</span>
+                <span className={styles.groupName}>{assignee}</span>
+                <span className={styles.groupCount}>{groupItems.length}건</span>
+                {/* 그룹 내 진행률 평균 */}
+                <span className={styles.groupAvg}>
+                  평균 진행률 {Math.round(groupItems.reduce((s, i) => s + i.progress, 0) / groupItems.length)}%
+                </span>
+                {/* 지연 건수 */}
+                {groupItems.filter(isDelayed).length > 0 && (
+                  <span className={styles.groupDelayed}>
+                    ⚠ 지연 {groupItems.filter(isDelayed).length}건
                   </span>
-                  <span className={`${styles.statusBadge} ${styles[`status_${item.status}` as keyof typeof styles]}`}>
-                    {STATUS_LABEL[item.status]}
-                  </span>
-                </div>
-
-                {/* 제목 + 설명 */}
-                <div className={styles.colTitle}>
-                  <span className={styles.rowTitle}>{item.title}</span>
-                  {item.description && (
-                    <span className={styles.rowDesc}>
-                      {item.description.length > 60
-                        ? item.description.slice(0, 60) + '...'
-                        : item.description}
-                    </span>
-                  )}
-                </div>
-
-                {/* 진행률 */}
-                <div className={styles.colProgress}>
-                  <div className={styles.progressTop}>
-                    <span className={styles.progressBar}>
-                      <span
-                        className={styles.progressFill}
-                        style={{ width: `${item.progress}%` }}
-                      />
-                    </span>
-                    <span className={styles.progressPct}>{item.progress}%</span>
-                  </div>
-                </div>
-
-                {/* 기간 + D-day */}
-                <div className={styles.colDate}>
-                  <span className={styles.dateText}>
-                    {formatDate(item.start_date)} ~ {formatDate(item.end_date)}
-                  </span>
-                  {remaining !== null && (
-                    <span className={`${styles.dday} ${
-                      delayed ? styles.ddayOverdue :
-                      remaining <= 7 ? styles.ddayUrgent :
-                      styles.ddayNormal
-                    }`}>
-                      {delayed ? `D+${Math.abs(remaining)} 지연` : remaining === 0 ? 'D-Day' : `D-${remaining}`}
-                    </span>
-                  )}
-                </div>
-
-                {/* 수정/삭제 */}
-                <div className={styles.colActions}>
-                  {user?.id === item.author_id ? (
-                    <>
-                      <button onClick={() => navigate(`/config-mgmt/${item.id}/edit`)} className={styles.btnEdit}>수정</button>
-                      <button onClick={() => handleDelete(item.id)} className={styles.btnDelete}>삭제</button>
-                    </>
-                  ) : (
-                    <span className={styles.noAction}>—</span>
-                  )}
-                </div>
+                )}
               </div>
-            );
-          })}
+              {/* 그룹 리스트 */}
+              <div className={styles.listWrap}>
+                <div className={styles.listHeader}>
+                  <span className={styles.colBadges}>우선순위 / 상태</span>
+                  <span className={styles.colTitle}>제목 및 설명</span>
+                  <span className={styles.colProgress}>진행률</span>
+                  <span className={styles.colDate}>기간 / D-day</span>
+                  <span className={styles.colActions}>관리</span>
+                </div>
+                {groupItems.map((item, idx) => renderRow(item, idx, true))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
