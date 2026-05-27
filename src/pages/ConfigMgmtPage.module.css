@@ -114,8 +114,10 @@
   transition: all 0.18s;
 }
 
-.viewBtn:first-child { border-radius: 8px 0 0 8px; border-right: none; }
-.viewBtn:last-child  { border-radius: 0 8px 8px 0; }
+.viewBtnFirst { border-radius: 8px 0 0 8px; }
+.viewBtnLast  { border-radius: 0 8px 8px 0; }
+
+.viewBtn + .viewBtn { border-left: none; }
 
 .viewBtn:hover { background: #f0fdf4; color: #16a34a; border-color: #16a34a; }
 
@@ -125,7 +127,16 @@
   border-color: #16a34a;
 }
 
-.viewBtnActive:hover { background: #15803d; }
+.viewBtnActive:hover { background: #15803d; color: #fff; }
+
+/* 보기 모드 구분선 (담당자별 | 날짜별) */
+.viewSep {
+  width: 1px;
+  height: 24px;
+  background: #d1d5db;
+  align-self: center;
+  flex-shrink: 0;
+}
 
 /* 필터 탭 */
 .tabs {
@@ -382,11 +393,24 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.7rem 1.2rem;
-  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-  border: 1.5px solid #bbf7d0;
   border-radius: 10px 10px 0 0;
   border-bottom: none;
 }
+
+/* 담당자별 헤더 — 초록 계열 */
+.headerGreen {
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border: 1.5px solid #bbf7d0;
+}
+
+/* 날짜별 헤더 — 파란 계열 */
+.headerBlue {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1.5px solid #bfdbfe;
+}
+
+.headerBlue .groupName  { color: #1d4ed8; }
+.headerBlue .groupCount { background: #2563eb; }
 
 .groupIcon { font-size: 1rem; }
 
