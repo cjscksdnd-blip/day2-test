@@ -49,7 +49,7 @@ export default function ConfigMgmtPage() {
     setLoading(true);
     const { data, error } = await supabase
       .from('config_items')
-      .select('*, profiles(email)')
+      .select('*')
       .order('created_at', { ascending: false });
     if (!error) setItems(data ?? []);
     setLoading(false);
@@ -212,7 +212,7 @@ export default function ConfigMgmtPage() {
 
                 {/* 작성자 + 액션 */}
                 <div className={styles.cardBottom}>
-                  <span className={styles.author}>{item.profiles?.email ?? '알 수 없음'}</span>
+                  <span className={styles.author}>{item.author_id.slice(0, 8)}...</span>
                   {user?.id === item.author_id && (
                     <div className={styles.actions}>
                       <button
