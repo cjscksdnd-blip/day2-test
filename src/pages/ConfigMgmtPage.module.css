@@ -185,6 +185,98 @@
   color: #fff;
 }
 
+/* 현재 작업중 배너 */
+.currentBanner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  border: 1.5px solid #4ade80;
+  border-radius: 12px;
+  padding: 0.9rem 1.4rem;
+  margin-bottom: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.currentBanner:hover {
+  border-color: #16a34a;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.18);
+  transform: translateY(-1px);
+}
+
+.currentIcon {
+  font-size: 1.1rem;
+  color: #15803d;
+  flex-shrink: 0;
+}
+
+.currentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.currentLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #15803d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.currentTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.currentAssignee {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #15803d;
+  background: #fff;
+  border: 1px solid #86efac;
+  border-radius: 99px;
+  padding: 0.15rem 0.6rem;
+  flex-shrink: 0;
+}
+
+.currentProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  width: 80px;
+}
+
+.currentPct {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.currentBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.currentFill {
+  height: 100%;
+  background: #16a34a;
+  border-radius: 99px;
+  transition: width 0.3s;
+}
+
 /* ─── 리스트 ─── */
 .listWrap {
   border: 1.5px solid #d1fae5;
@@ -194,6 +286,7 @@
 }
 
 /* 컬럼 너비 (공통 정의) */
+.colCurrent  { width: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .colBadges   { width: 120px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-start; }
 .colTitle    { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
 .colAssignee { width: 90px; flex-shrink: 0; }
@@ -255,12 +348,48 @@
 .rowAlt { background: #fafafa; }
 .rowAlt:hover { background: #dcfce7; }
 
+.rowCurrent {
+  border-left: 3px solid #16a34a;
+  background: #f0fdf4 !important;
+}
+
+.rowCurrent:hover { background: #dcfce7 !important; }
+
 .rowDelayed {
   border-left: 3px solid #ef4444;
   background: #fffafa !important;
 }
 
 .rowDelayed:hover { background: #fff5f5 !important; }
+
+/* 현재 작업중 토글 버튼 */
+.btnCurrent {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 0.6rem;
+  color: transparent;
+}
+
+.btnCurrent:hover {
+  border-color: #16a34a;
+  background: #dcfce7;
+}
+
+.btnCurrentActive {
+  border-color: #16a34a;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.65rem;
+}
 
 /* 배지 */
 .priorityBadge,
@@ -513,9 +642,10 @@
     gap: 0.5rem;
     padding: 0.85rem 1rem;
   }
+  .colCurrent  { width: auto; order: 0; }
   .colBadges   { width: auto; flex-direction: row; order: 1; }
   .colAssignee { width: auto; order: 2; }
-  .colTitle    { width: 100%; order: 0; }
+  .colTitle    { width: calc(100% - 40px); order: 0; }
   .colProgress { width: 100%; order: 3; }
   .colDate     { width: 100%; order: 4; flex-direction: row; align-items: center; }
   .colActions  { width: 100%; order: 5; justify-content: flex-end; }

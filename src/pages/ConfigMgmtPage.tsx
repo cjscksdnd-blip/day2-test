@@ -116,6 +116,19 @@ export default function ConfigMgmtPage() {
     if (!error) setItems(prev => prev.filter(i => i.id !== id));
   };
 
+  const handleSetCurrent = async (e: React.MouseEvent, item: ConfigItem) => {
+    e.stopPropagation();
+    const newValue = !item.is_current;
+    if (newValue) {
+      await supabase.from('config_items').update({ is_current: false }).neq('id', item.id);
+    }
+    await supabase.from('config_items').update({ is_current: newValue }).eq('id', item.id);
+    setItems(prev => prev.map(i => ({
+      ...i,
+      is_current: i.id === item.id ? newValue : (newValue ? false : i.is_current),
+    })));
+  };
+
   const stats = {
     total: items.length,
     inProgress: items.filter(i => i.status === 'in_progress').length,
@@ -136,9 +149,18 @@ export default function ConfigMgmtPage() {
     return (
       <div
         key={item.id}
-        className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}
+        className={`${styles.listRow} ${item.is_current ? styles.rowCurrent : ''} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 && !item.is_current ? styles.rowAlt : ''}`}
         onClick={() => navigate(`/config-mgmt/${item.id}`)}
       >
+        <div className={styles.colCurrent} onClick={e => e.stopPropagation()}>
+          <button
+            className={`${styles.btnCurrent} ${item.is_current ? styles.btnCurrentActive : ''}`}
+            onClick={e => handleSetCurrent(e, item)}
+            title={item.is_current ? '현재 작업중 해제' : '현재 작업중으로 설정'}
+          >
+            {item.is_current ? '▶' : ''}
+          </button>
+        </div>
         <div className={styles.colBadges}>
           <span className={`${styles.priorityBadge} ${styles[`priority_${item.priority}` as keyof typeof styles]}`}>{PRIORITY_LABEL[item.priority]}</span>
           <span className={`${styles.statusBadge} ${styles[`status_${item.status}` as keyof typeof styles]}`}>{STATUS_LABEL[item.status]}</span>
@@ -208,6 +230,7 @@ export default function ConfigMgmtPage() {
           </div>
           <div className={styles.listWrap}>
             <div className={styles.listHeader}>
+              <span className={styles.colCurrent} />
               <span className={styles.colBadges}>우선순위 / 상태</span>
               <span className={styles.colTitle}>제목 및 설명</span>
               {showAssignee && <span className={styles.colAssignee}>담당자</span>}
@@ -236,6 +259,7 @@ export default function ConfigMgmtPage() {
         return (
           <div className={styles.listWrap}>
             <div className={styles.listHeader}>
+              <span className={styles.colCurrent} />
               <span className={styles.colBadges}>우선순위 / 상태</span>
               <span className={styles.colTitle}>제목 및 설명</span>
               <span className={styles.colAssignee}>담당자</span>
@@ -291,6 +315,28 @@ export default function ConfigMgmtPage() {
           <span className={styles.statLabel}>보류</span>
         </div>
       </div>
+
+      {/* 현재 작업중 배너 */}
+      {(() => {
+        const cur = items.find(i => i.is_current);
+        if (!cur) return null;
+        return (
+          <div className={styles.currentBanner} onClick={() => navigate(`/config-mgmt/${cur.id}`)}>
+            <span className={styles.currentIcon}>▶</span>
+            <div className={styles.currentInfo}>
+              <span className={styles.currentLabel}>현재 작업중</span>
+              <span className={styles.currentTitle}>{cur.title}</span>
+            </div>
+            {cur.assignee && <span className={styles.currentAssignee}>{cur.assignee}</span>}
+            <div className={styles.currentProgress}>
+              <span className={styles.currentPct}>{cur.progress}%</span>
+              <div className={styles.currentBar}>
+                <div className={styles.currentFill} style={{ width: `${cur.progress}%` }} />
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* 필터 탭 + 보기 토글 */}
       <div className={styles.tabsRow}>

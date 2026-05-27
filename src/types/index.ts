@@ -27,6 +27,7 @@ export interface ConfigItem {
   start_date: string | null;
   end_date: string | null;
   assignee: string | null;
+  is_current: boolean | null;
   author_id: string;
   created_at: string;
   updated_at: string | null;
