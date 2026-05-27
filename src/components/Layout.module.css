@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   background-color: #f0fdf4;
-  background-image: url('/green.png');
+  background-image: url('../assets/green.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
