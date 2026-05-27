@@ -38,6 +38,7 @@ export default function ConfigMgmtDetailPage() {
   const { user } = useAuth();
   const [item, setItem] = useState<ConfigItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   // 인라인 수정 상태
   const [editing, setEditing] = useState(false);
@@ -271,9 +272,24 @@ export default function ConfigMgmtDetailPage() {
               className={styles.descTextarea} rows={5} placeholder="설명을 입력하세요"
             />
           ) : (
-            <p className={styles.descText}>
-              {item.description ?? <span className={styles.noDesc}>설명이 없습니다.</span>}
-            </p>
+            <>
+              <p className={styles.descText}>
+                {item.description ?? <span className={styles.noDesc}>설명이 없습니다.</span>}
+              </p>
+              {item.images && item.images.length > 0 && (
+                <div className={styles.imageGrid}>
+                  {item.images.map((url, i) => (
+                    <img
+                      key={url}
+                      src={url}
+                      alt={`첨부 이미지 ${i + 1}`}
+                      className={styles.imageThumb}
+                      onClick={() => setLightboxUrl(url)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -291,6 +307,13 @@ export default function ConfigMgmtDetailPage() {
           </div>
         )}
       </div>
+
+      {lightboxUrl && (
+        <div className={styles.lightbox} onClick={() => setLightboxUrl(null)}>
+          <button className={styles.lightboxClose} onClick={() => setLightboxUrl(null)}>×</button>
+          <img src={lightboxUrl} alt="첨부 이미지" className={styles.lightboxImg} />
+        </div>
+      )}
     </div>
   );
 }
