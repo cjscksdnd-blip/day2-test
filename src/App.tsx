@@ -9,6 +9,7 @@ import PostDetailPage from './pages/PostDetailPage';
 import PostCreatePage from './pages/PostCreatePage';
 import PostEditPage from './pages/PostEditPage';
 import ConfigMgmtPage from './pages/ConfigMgmtPage';
+import ConfigMgmtDetailPage from './pages/ConfigMgmtDetailPage';
 import ConfigMgmtCreatePage from './pages/ConfigMgmtCreatePage';
 import ConfigMgmtEditPage from './pages/ConfigMgmtEditPage';
 
@@ -39,6 +40,7 @@ export default function App() {
               }
             />
             <Route path="/config-mgmt" element={<ConfigMgmtPage />} />
+            <Route path="/config-mgmt/:id" element={<ConfigMgmtDetailPage />} />
             <Route
               path="/config-mgmt/new"
               element={

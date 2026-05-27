@@ -1,0 +1,306 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: #6b7280;
+}
+
+/* 상단 내비 */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+  gap: 1rem;
+}
+
+.btnBack {
+  background: transparent;
+  border: 1.5px solid #d1d5db;
+  color: #6b7280;
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btnBack:hover { border-color: #16a34a; color: #16a34a; }
+
+.btnEdit {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.48rem 1.2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btnEdit:hover { background: #15803d; }
+
+.editActions { display: flex; gap: 0.6rem; }
+
+.btnCancel {
+  background: transparent;
+  border: 1.5px solid #d1d5db;
+  color: #6b7280;
+  border-radius: 8px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btnCancel:hover { border-color: #9ca3af; color: #374151; }
+
+.btnSave {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.48rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btnSave:hover:not(:disabled) { background: #15803d; }
+.btnSave:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* 카드 */
+.card {
+  background: #fff;
+  border: 1.5px solid #d1fae5;
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* 배지 행 */
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.priorityBadge, .statusBadge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 99px;
+}
+.priority_high   { background: #fee2e2; color: #dc2626; }
+.priority_medium { background: #fef3c7; color: #d97706; }
+.priority_low    { background: #dbeafe; color: #2563eb; }
+.status_planning    { background: #f3f4f6; color: #4b5563; }
+.status_in_progress { background: #dbeafe; color: #1d4ed8; }
+.status_completed   { background: #dcfce7; color: #15803d; }
+.status_on_hold     { background: #fef9c3; color: #92400e; }
+
+.delayedBadge {
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 99px;
+}
+
+.modifiedBadge {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+}
+
+.selectInline {
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.82rem;
+  color: #374151;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+.selectInline:focus { border-color: #16a34a; }
+
+/* 제목 */
+.titleSection {}
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  line-height: 1.4;
+}
+.titleInput {
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  border: 1.5px solid #16a34a;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+}
+
+/* 메타 */
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+.metaItem { display: flex; align-items: center; gap: 0.3rem; }
+.metaItem strong { color: #374151; font-weight: 600; }
+.metaDot { color: #d1d5db; }
+.metaModified { color: #16a34a; font-weight: 500; }
+.metaInput {
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.18rem 0.5rem;
+  font-size: 0.85rem;
+  color: #374151;
+  outline: none;
+  width: 110px;
+}
+.metaInput:focus { border-color: #16a34a; }
+
+/* 구분선 */
+.divider {
+  height: 1px;
+  background: #f0fdf4;
+  margin: 0;
+}
+
+/* 섹션 */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sectionLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.progressPct {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+.progressBar {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progressFill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #16a34a, #4ade80);
+  transition: width 0.4s ease;
+  min-width: 4px;
+}
+.sliderWrap { display: flex; flex-direction: column; gap: 0.2rem; }
+.range { width: 100%; accent-color: #16a34a; cursor: pointer; }
+.rangeLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* 기간 */
+.dateRow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.dateSep { color: #9ca3af; font-size: 0.9rem; }
+.dateInput {
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+  outline: none;
+}
+.dateInput:focus { border-color: #16a34a; }
+.dateDisplay { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.dateText { font-size: 0.9rem; color: #374151; }
+
+.dday {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+.ddayNormal  { background: #dcfce7; color: #15803d; }
+.ddayUrgent  { background: #fef3c7; color: #d97706; }
+.ddayOverdue { background: #fee2e2; color: #dc2626; }
+
+/* 설명 */
+.descText {
+  font-size: 0.95rem;
+  color: #374151;
+  line-height: 1.75;
+  margin: 0;
+  white-space: pre-wrap;
+}
+.noDesc { color: #9ca3af; font-style: italic; }
+.descTextarea {
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9rem;
+  color: #374151;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+  transition: border-color 0.2s;
+}
+.descTextarea:focus { border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.1); }
+
+.saveError {
+  color: #ef4444;
+  font-size: 0.875rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  margin: 0;
+}
+
+.bottomActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+@media (max-width: 640px) {
+  .card { padding: 1.2rem; }
+  .title { font-size: 1.3rem; }
+}

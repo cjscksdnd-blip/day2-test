@@ -282,6 +282,13 @@
 .status_on_hold     { background: #fef9c3; color: #92400e; }
 
 /* 제목/설명 */
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
 .rowTitle {
   font-size: 0.95rem;
   font-weight: 600;
@@ -289,6 +296,18 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.modifiedChip {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  border-radius: 99px;
+  padding: 0.1rem 0.45rem;
+  white-space: nowrap;
 }
 
 .rowDesc {

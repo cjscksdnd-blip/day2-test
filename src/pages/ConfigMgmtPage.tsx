@@ -137,14 +137,19 @@ export default function ConfigMgmtPage() {
       <div
         key={item.id}
         className={`${styles.listRow} ${delayed ? styles.rowDelayed : ''} ${idx % 2 === 1 ? styles.rowAlt : ''}`}
-        onClick={() => navigate(`/config-mgmt/${item.id}/edit`)}
+        onClick={() => navigate(`/config-mgmt/${item.id}`)}
       >
         <div className={styles.colBadges}>
           <span className={`${styles.priorityBadge} ${styles[`priority_${item.priority}` as keyof typeof styles]}`}>{PRIORITY_LABEL[item.priority]}</span>
           <span className={`${styles.statusBadge} ${styles[`status_${item.status}` as keyof typeof styles]}`}>{STATUS_LABEL[item.status]}</span>
         </div>
         <div className={styles.colTitle}>
-          <span className={styles.rowTitle}>{item.title}</span>
+          <div className={styles.titleRow}>
+            <span className={styles.rowTitle}>{item.title}</span>
+            {item.updated_at && new Date(item.updated_at).getTime() - new Date(item.created_at).getTime() > 5000 && (
+              <span className={styles.modifiedChip}>수정됨</span>
+            )}
+          </div>
           {item.description && <span className={styles.rowDesc}>{item.description.length > 55 ? item.description.slice(0, 55) + '...' : item.description}</span>}
         </div>
         {showAssignee && (

@@ -28,4 +28,5 @@ export interface ConfigItem {
   assignee: string | null;
   author_id: string;
   created_at: string;
+  updated_at: string | null;
 }
